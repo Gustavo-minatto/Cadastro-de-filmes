@@ -1,12 +1,14 @@
 require("express-async-errors");
-const migrationsRun = require("./database/sqlite/migrations");
-const appError = require("./utils/AppError");
+require("dotenv/config");
+
 const uploadConfig = require("./configs/upload");
+
+const appError = require("./utils/AppError");
+const migrationsRun = require("./database/sqlite/migrations");
 
 const cors = require("cors");
 const express = require("express");
 const routes = require("./routes");
-
 
 migrationsRun();
 
@@ -17,8 +19,6 @@ app.use(express.json());
 app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 
 app.use(routes);
-
-
 
 app.use((error, request, response, next) => {
   if (error instanceof appError) {
@@ -36,6 +36,6 @@ app.use((error, request, response, next) => {
   })
 });
 
-const PORT = 3333;
+const PORT = process.env.PORT || 3333;
 //listen é para esperar na PORT a variavel que criei para ser a porta;
 app.listen(PORT, () => console.log(`Server is running on Port ${PORT}`))
